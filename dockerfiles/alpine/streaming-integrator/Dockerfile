@@ -57,6 +57,11 @@ RUN \
     apk add --no-cache \
         netcat-openbsd
 # add the WSO2 product distribution to user's home directory
+
+RUN apk add --update \
+    curl \
+    && rm -rf /var/cache/apk/*
+
 RUN \
     wget --no-check-certificate -O ${WSO2_SERVER}.zip "${WSO2_SERVER_DIST_URL}" \
     && unzip -d ${USER_HOME} ${WSO2_SERVER}.zip \
@@ -64,6 +69,7 @@ RUN \
     && chown wso2carbon:wso2 -R ${WSO2_SERVER_HOME}
 # add MySQL JDBC connector to server home as a third party library
 ADD --chown=wso2carbon:wso2 https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar ${WSO2_SERVER_HOME}/lib/
+COPY deployment.yaml ${WSO2_SERVER_HOME}/conf/server/
 
 # set the user and work directory
 USER ${USER_ID}

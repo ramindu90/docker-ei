@@ -32,5 +32,14 @@ test -d ${config_volume} && [[ "$(ls -A ${config_volume})" ]] && cp -RL ${config
 # copy any artifact changes mounted to artifact_volume
 test -d ${artifact_volume} && [[ "$(ls -A ${artifact_volume})" ]] && cp -RL ${artifact_volume}/* ${WSO2_SERVER_HOME}/
 
+IP=$(ifconfig eth0 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1)
+#IP=$(curl http://checkip.amazonaws.com)
+#echo "$(curl http://localhost:51678/v1/tasks)"
+echo "$ECS_CONTAINER_METADATA_URI"
+echo "$(curl $ECS_CONTAINER_METADATA_URI/task)"
+DEPLOYMENT_YAML=${WSO2_SERVER_HOME}/conf/server/deployment.yaml
+echo "$IP"
+sed -i "s/localhost/$IP/" "$DEPLOYMENT_YAML"
+
 # start WSO2 server
 sh ${WSO2_SERVER_HOME}/bin/server.sh "$@"
